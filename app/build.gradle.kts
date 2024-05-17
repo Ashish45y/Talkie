@@ -52,24 +52,28 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     //Retrofit depenedency
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 
     //Glide
-    implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation(libs.glide)
 
     // hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
-    implementation("androidx.browser:browser:1.6.0")
+    implementation(libs.androidx.browser)
 
     //Room
-    implementation ("androidx.room:room-runtime:2.5.0")
-    implementation ("androidx.room:room-ktx:2.5.0")
-    kapt ("androidx.room:room-compiler:2.6.1")
+    implementation (libs.androidx.room.runtime)
+    implementation (libs.androidx.room.ktx)
+    kapt (libs.androidx.room.compiler)
 
     //Paging
-    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation(libs.androidx.paging.runtime)
+
+    //lottie
+    implementation(libs.lottie)
+    implementation(libs.paper.onboarding)
 }
