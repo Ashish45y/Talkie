@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
+   // id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -60,8 +60,8 @@ dependencies {
     implementation(libs.glide)
 
     // hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+//    implementation(libs.hilt.android)
+//    kapt(libs.hilt.android.compiler)
 
     implementation(libs.androidx.browser)
 
@@ -76,4 +76,8 @@ dependencies {
     //lottie
     implementation(libs.lottie)
     implementation(libs.paper.onboarding)
+
+    //dagger2 Dependency
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 }
