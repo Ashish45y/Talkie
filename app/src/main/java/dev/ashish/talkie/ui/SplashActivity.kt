@@ -1,4 +1,4 @@
-package dev.ashish.talkie
+package dev.ashish.talkie.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import dev.ashish.talkie.R
 import dev.ashish.talkie.databinding.ActivitySplashBinding
 import dev.ashish.talkie.utils.ANIMATION_DURATION
 import dev.ashish.talkie.utils.INITIAL_DELAY
