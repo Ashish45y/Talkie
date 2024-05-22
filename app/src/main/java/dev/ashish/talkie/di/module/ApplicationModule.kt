@@ -26,16 +26,17 @@ import javax.inject.Singleton
 class ApplicationModule(private val application: TalkieApplication) {
     @ApplicationContext
     @Provides
-    fun provideContext(): Context{
+    fun provideContext(): Context {
         return application
     }
+
     @Provides
     @Singleton
     fun provideApplication() = application
 
     @Provides
     @Singleton
-    fun provideGsonConverterFactory() : GsonConverterFactory = GsonConverterFactory.create()
+    fun provideGsonConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
     @Provides
     @Singleton
@@ -43,7 +44,7 @@ class ApplicationModule(private val application: TalkieApplication) {
         @BaseUrl baseUrl: String,
         okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
-    ): NetworkService{
+    ): NetworkService {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)
@@ -51,6 +52,14 @@ class ApplicationModule(private val application: TalkieApplication) {
             .build()
             .create(NetworkService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(apiKeyInterceptor: ApiKeyInteceptor):
+            OkHttpClient = OkHttpClient().newBuilder()
+        .addInterceptor(apiKeyInterceptor)
+        .build()
+
     @Provides
     @Singleton
     fun provideNetworkHelper(@ApplicationContext context: Context): NetworkHelper {
