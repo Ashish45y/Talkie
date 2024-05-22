@@ -12,7 +12,7 @@ import javax.inject.Inject
 class NowPlayingRepo @Inject constructor(private val networkService: NetworkService) {
     fun getNowPlayingList(category: String, page: Int) : Flow<List<MoviesDto >>{
         return flow {
-            emit(networkService.getMoviesList(category,1))
+            emit(networkService.getMoviesList(category,page))
         }.map {
             it.results
         }
