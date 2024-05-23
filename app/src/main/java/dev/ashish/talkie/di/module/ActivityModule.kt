@@ -3,8 +3,10 @@ package dev.ashish.talkie.di.module
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import dagger.Module
 import dagger.Provides
+import dev.ashish.talkie.R
 import dev.ashish.talkie.di.ActivityContext
 import dev.ashish.talkie.repository.NowPlayingRepo
 import dev.ashish.talkie.ui.NowPlayingViewModel
@@ -37,5 +39,11 @@ class ActivityModule(private val activity: AppCompatActivity) {
     }
 
     @Provides
-    fun provideSliderAdapter() = SliderAdapter(ArrayList())
+    fun provideViewPager2(): ViewPager2 {
+        return viewPager2
+    }
+    @Provides
+    fun provideSliderAdapter(viewPager2: ViewPager2): SliderAdapter {
+        return SliderAdapter(ArrayList(), viewPager2)
+    }
 }

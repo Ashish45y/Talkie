@@ -11,7 +11,8 @@ import dev.ashish.talkie.data.model.MoviesDto
 import dev.ashish.talkie.databinding.SlideItemContainerBinding
 
 class SliderAdapter(
-    private val movieList: ArrayList<MoviesDto>
+    private val movieList: List<MoviesDto>,
+    private val viewPager2: ViewPager2
 ) :
     RecyclerView.Adapter<SliderAdapter.SliderViewHolder>() {
     private val handler = Handler(Looper.getMainLooper())
@@ -54,14 +55,14 @@ class SliderAdapter(
         handler.removeCallbacks(autoSlideRunnable)
     }
 
-//    fun attachToViewPager() {
-//        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                startAutoSlide()
-//            }
-//        })
-//    }
+    fun attachToViewPager() {
+        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                startAutoSlide()
+            }
+        })
+    }
 
     companion object {
         const val AUTO_SLIDE_INTERVAL = 3000L
