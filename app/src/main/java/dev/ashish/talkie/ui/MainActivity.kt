@@ -2,11 +2,10 @@ package dev.ashish.talkie.ui
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,14 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import dev.ashish.talkie.R
 import dev.ashish.talkie.TalkieApplication
 import dev.ashish.talkie.databinding.ActivityMainBinding
 import dev.ashish.talkie.di.component.DaggerActivityComponent
 import dev.ashish.talkie.di.module.ActivityModule
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
@@ -30,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var adapter: SliderAdapter
-    private lateinit var viewPager: ViewPager2
+
     private val slideHandler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +35,33 @@ class MainActivity : AppCompatActivity() {
         injectDependencies()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewPager = binding.viewPagger
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+
+
+        binding.viewPagger.adapter = adapter
         setupObserver()
-        setupUI()
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+    fun attachToViewPager() {
+        binding.viewPagger.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                startAutoSlide()
+            }
+        })
+    }
+
+    private val autoSlideRunnable = Runnable {
+        binding.viewPagger.currentItem =
+            (binding.viewPagger.currentItem + 1) % adapter.getTotalItem()
+    }
+
+    fun startAutoSlide() {
+        handler.postDelayed(autoSlideRunnable, SliderAdapter.AUTO_SLIDE_INTERVAL)
+    }
+
+    fun stopAutoSlide() {
+        handler.removeCallbacks(autoSlideRunnable)
     }
 
     private fun setupObserver() {
@@ -54,14 +70,13 @@ class MainActivity : AppCompatActivity() {
                 viewModel.nowPlayingUiState.collect {
                     when (it) {
                         is dev.ashish.talkie.ui.base.UiState.Success -> {
-                            adapter = SliderAdapter(it.data, viewPager)
-                            viewPager.adapter = adapter
-                            adapter.attachToViewPager()
 
-                            viewPager.clipToPadding = false
-                            viewPager.clipChildren = false
-                            viewPager.offscreenPageLimit = 3
-                            viewPager.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+                            adapter.setData(it.data)
+                            binding.viewPagger.clipToPadding = false
+                            binding.viewPagger.clipChildren = false
+                            binding.viewPagger.offscreenPageLimit = 3
+                            binding.viewPagger.getChildAt(0).overScrollMode =
+                                RecyclerView.OVER_SCROLL_NEVER
 
                             val compositePageTransformer = CompositePageTransformer()
                             compositePageTransformer.addTransformer(MarginPageTransformer(48))
@@ -69,11 +84,11 @@ class MainActivity : AppCompatActivity() {
                                 val r = 1 - Math.abs(position)
                                 page.scaleY = 0.85f + r * 0.15f
                             }
-                            viewPager.setPageTransformer(compositePageTransformer)
+                            binding.viewPagger.setPageTransformer(compositePageTransformer)
 
-                            viewPager.setCurrentItem(1, false)
+                            binding.viewPagger.setCurrentItem(1, false)
 
-                            viewPager.registerOnPageChangeCallback(object :
+                            binding.viewPagger.registerOnPageChangeCallback(object :
                                 ViewPager2.OnPageChangeCallback() {
                                 override fun onPageSelected(position: Int) {
                                     super.onPageSelected(position)
@@ -84,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                                     )
                                 }
                             })
-                            adapter.startAutoSlide()
+                            startAutoSlide()
                         }
 
                         is dev.ashish.talkie.ui.base.UiState.Loading -> {
@@ -101,11 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val sliderRunnable = Runnable {
-        viewPager.setCurrentItem(viewPager.currentItem + 1, true)
-    }
-
-    private fun setupUI() {
-
+        binding.viewPagger.setCurrentItem(binding.viewPagger.currentItem + 1, true)
     }
 
     private fun injectDependencies() {

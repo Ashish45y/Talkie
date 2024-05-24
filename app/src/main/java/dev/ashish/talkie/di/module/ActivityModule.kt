@@ -38,12 +38,9 @@ class ActivityModule(private val activity: AppCompatActivity) {
         })[NowPlayingViewModel::class.java]
     }
 
+
     @Provides
-    fun provideViewPager2(): ViewPager2 {
-        return viewPager2
-    }
-    @Provides
-    fun provideSliderAdapter(viewPager2: ViewPager2): SliderAdapter {
-        return SliderAdapter(ArrayList(), viewPager2)
+    fun provideSliderAdapter(): SliderAdapter {
+        return SliderAdapter(ArrayList())
     }
 }
