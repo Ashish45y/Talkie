@@ -1,11 +1,8 @@
-package dev.ashish.talkie.ui
+package dev.ashish.talkie.ui.adapater
 
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import dev.ashish.talkie.data.model.MoviesDto
 import dev.ashish.talkie.databinding.SlideItemContainerBinding
@@ -38,7 +35,6 @@ class SliderAdapter(
 
     override fun getItemCount(): Int = movieList.size
 
-
     override fun onBindViewHolder(holder: SliderViewHolder, position: Int) {
         holder.bind(movieList[position])
     }
@@ -52,6 +48,6 @@ class SliderAdapter(
     }
 
     companion object {
-        const val AUTO_SLIDE_INTERVAL = 1000L
+        const val AUTO_SLIDE_INTERVAL = 30000L
     }
 }

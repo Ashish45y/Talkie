@@ -1,4 +1,4 @@
-package dev.ashish.talkie.ui
+package dev.ashish.talkie.ui.mainActivity
 
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -17,8 +18,16 @@ import dev.ashish.talkie.TalkieApplication
 import dev.ashish.talkie.databinding.ActivityMainBinding
 import dev.ashish.talkie.di.component.DaggerActivityComponent
 import dev.ashish.talkie.di.module.ActivityModule
+import dev.ashish.talkie.ui.adapater.PopularMovieAdapter
+import dev.ashish.talkie.ui.adapater.SliderAdapter
+import dev.ashish.talkie.ui.adapater.UpcomingMovieAdapter
+import dev.ashish.talkie.ui.base.UiState
+import dev.ashish.talkie.ui.viewmodel.NowPlayingViewModel
+import dev.ashish.talkie.ui.viewmodel.PopularMovieViewModel
+import dev.ashish.talkie.ui.viewmodel.UpcomingMovieViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
@@ -26,7 +35,19 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: NowPlayingViewModel
 
     @Inject
+    lateinit var popularViewModel: PopularMovieViewModel
+
+    @Inject
+    lateinit var upcomingViewmodel: UpcomingMovieViewModel
+
+    @Inject
     lateinit var adapter: SliderAdapter
+
+    @Inject
+    lateinit var adapterPopular: PopularMovieAdapter
+
+    @Inject
+    lateinit var adapaterUpcoming: UpcomingMovieAdapter
 
     private val slideHandler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +56,67 @@ class MainActivity : AppCompatActivity() {
         injectDependencies()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-        binding.viewPagger.adapter = adapter
+        setUpUi()
         setupObserver()
+        setupPopularMovie()
+        setupUpcomingMovie()
+    }
+
+    private fun setupUpcomingMovie() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                upcomingViewmodel.upcomingUiState.collect {
+                    when (it) {
+                        is UiState.Success -> {
+                            adapaterUpcoming.setData(it.data)
+                        }
+
+                        is UiState.Loading -> {
+                            Log.d("Rai", "setupUpcomingMovie: ")
+                        }
+
+                        is UiState.Error -> {
+                            Log.d("Rai", "setupUpcomingMovie: Error")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupPopularMovie() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                popularViewModel.popularMovieUiState.collect {
+                    when (it) {
+                        is UiState.Success -> {
+                            adapterPopular.setData(it.data)
+                        }
+
+                        is UiState.Loading -> {
+
+                        }
+
+                        is UiState.Error -> {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setUpUi() {
+        binding.viewPagger.adapter = adapter
+        binding.recViewPopular.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = adapterPopular
+        }
+
+        binding.recViewUpcomming.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = adapaterUpcoming
+        }
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -60,17 +138,12 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed(autoSlideRunnable, SliderAdapter.AUTO_SLIDE_INTERVAL)
     }
 
-    fun stopAutoSlide() {
-        handler.removeCallbacks(autoSlideRunnable)
-    }
-
     private fun setupObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.nowPlayingUiState.collect {
                     when (it) {
                         is dev.ashish.talkie.ui.base.UiState.Success -> {
-
                             adapter.setData(it.data)
                             binding.viewPagger.clipToPadding = false
                             binding.viewPagger.clipChildren = false

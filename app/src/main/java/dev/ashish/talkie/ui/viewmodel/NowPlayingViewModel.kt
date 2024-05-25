@@ -1,4 +1,4 @@
-package dev.ashish.talkie.ui
+package dev.ashish.talkie.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

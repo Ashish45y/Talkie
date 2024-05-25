@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import dev.ashish.talkie.R
 import dev.ashish.talkie.databinding.ActivitySplashBinding
+import dev.ashish.talkie.ui.mainActivity.MainActivity
 import dev.ashish.talkie.utils.Constants.ANIMATION_DURATION
 import dev.ashish.talkie.utils.Constants.INITIAL_DELAY
 import dev.ashish.talkie.utils.Constants.LOTTIE_TRANSLATION_Y
