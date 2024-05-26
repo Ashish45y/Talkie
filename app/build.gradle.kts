@@ -81,4 +81,7 @@ dependencies {
     //dagger2 Dependency
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
+
+    // dot indicator
+    implementation(libs.dotsindicator)
 }

@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.Talkie" parent="Base.Theme.Talkie" />
+    <style name="RoundedEdges" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- Adjust the percentage as needed -->
+    </style>
 </resources>
